@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الثقافة المالية — بنك الامتحانات الإلكتروني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F1E4;
+    --paper-deep:#EFE7D3;
+    --card:#FFFDF8;
+    --ink:#1B2E4B;
+    --ink-soft:#4B5C77;
+    --ink-faint:#8592A6;
+    --gold:#B8902E;
+    --gold-bright:#D4A93A;
+    --gold-pale:#EFDFAF;
+    --line:#D9CDA9;
+    --correct:#2F7D5B;
+    --correct-bg:#E4F1EA;
+    --incorrect:#B0413E;
+    --incorrect-bg:#FBE9E7;
+    --shadow: 0 1px 2px rgba(27,46,75,0.06), 0 8px 24px rgba(27,46,75,0.08);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 100% -10%, rgba(184,144,46,0.08), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Cairo', sans-serif;
+    min-height:100vh;
+    line-height:1.6;
+  }
+
+  /* subtle ledger-line texture on the page background */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 38px, rgba(27,46,75,0.028) 39px
+    );
+    pointer-events:none;
+    z-index:0;
+  }
+
+  #app{ position:relative; z-index:1; max-width: 900px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  /* ---------- Header ---------- */
+  .masthead{
+    text-align:center;
+    padding: 18px 0 26px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 30px;
+    position:relative;
+  }
+  .masthead .eyebrow{
+    font-family:'Tajawal', sans-serif;
+    font-weight:500;
+    letter-spacing:2px;
+    font-size:12.5px;
+    color: var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .masthead h1{
+    font-family:'Aref Ruqaa', serif;
+    font-weight:700;
+    font-size:42px;
+    margin:0;
+    color:var(--ink);
+  }
+  .masthead p.tag{
+    font-family:'Tajawal', sans-serif;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:8px 0 0;
+  }
+  .masthead .seal{
+    position:absolute; top:14px; left:0;
+    width:54px;height:54px;
+    border:2px solid var(--gold);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Aref Ruqaa', serif;
+    color:var(--gold);
+    font-size:13px;
+    transform:rotate(-8deg);
+    opacity:0.85;
+  }
+
+  /* ---------- Home: exam list ---------- */
+  .section-label{
+    font-family:'Tajawal',sans-serif;
+    font-size:13px;
+    color:var(--ink-faint);
+    letter-spacing:1px;
+    margin: 26px 4px 12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background: var(--line);
+  }
+
+  .exam-grid{ display:flex; flex-direction:column; gap:14px; }
+
+  .exam-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .exam-card::before{
+    content:"";
+    position:absolute; right:0; top:0; bottom:0;
+    width:6px;
+    background: linear-gradient(var(--gold-bright), var(--gold));
+    opacity:0;
+    transition:opacity .15s ease;
+  }
+  .exam-card:hover{ transform: translateY(-2px); box-shadow: 0 4px 8px rgba(27,46,75,0.08), 0 14px 30px rgba(27,46,75,0.12); border-color:var(--gold-pale); }
+  .exam-card:hover::before{ opacity:1; }
+
+  .exam-card .index-bubble{
+    flex:0 0 auto;
+    width:54px;height:54px;border-radius:50%;
+    border:2px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Aref Ruqaa', serif;
+    font-size:22px;
+    color:var(--ink);
+    background:var(--paper);
+  }
+  .exam-card .info{ flex:1; min-width:0; }
+  .exam-card h3{ margin:0 0 4px; font-size:17.5px; font-weight:700; color:var(--ink);}
+  .exam-card .meta{ font-family:'Tajawal',sans-serif; font-size:13px; color:var(--ink-soft); display:flex; flex-wrap:wrap; gap:4px 14px;}
+  .exam-card .meta span{ display:inline-flex; align-items:center; gap:5px;}
+  .exam-card .chev{ color:var(--ink-faint); font-size:20px; flex:0 0 auto; }
+  .exam-card .best{
+    font-family:'Tajawal',sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--correct);
+    background:var(--correct-bg);
+    padding:3px 10px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+
+  .empty-note{
+    font-family:'Tajawal',sans-serif;
+    color:var(--ink-faint);
+    text-align:center;
+    padding:30px 10px;
+    font-size:14px;
+  }
+
+  /* ---------- Exam-taking screen ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    background:rgba(246,241,228,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--line);
+    margin: -28px -20px 24px;
+    padding: 14px 20px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .backbtn{
+    background:none;border:1px solid var(--line); color:var(--ink);
+    font-family:'Cairo',sans-serif; font-weight:600; font-size:14px;
+    padding:8px 14px; border-radius:10px; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+    transition: background .15s ease;
+  }
+  .backbtn:hover{ background:var(--gold-pale); }
+  .topbar .exam-title{ font-weight:700; font-size:15px; flex:1; }
+  .progress-wrap{ flex: 1 1 160px; max-width:220px; }
+  .progress-track{ height:8px; border-radius:6px; background:var(--paper-deep); overflow:hidden; border:1px solid var(--line);}
+  .progress-fill{ height:100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); width:0%; transition:width .2s ease; }
+  .progress-text{ font-family:'Tajawal',sans-serif; font-size:11.5px; color:var(--ink-soft); margin-top:4px; text-align:center;}
+
+  .q-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 22px 18px;
+    margin-bottom:16px;
+    scroll-margin-top: 90px;
+  }
+  .q-head{ display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .q-num{
+    flex:0 0 auto;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--ink); color:var(--paper);
+    font-family:'Aref Ruqaa',serif; font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .q-stem{ font-size:16.5px; font-weight:600; color:var(--ink); flex:1; padding-top:4px;}
+
+  .choices{ display:flex; flex-direction:column; gap:10px; }
+  .choice{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    cursor:pointer;
+    transition: border-color .12s ease, background .12s ease;
+    font-size:15px;
+  }
+  .choice:hover{ border-color:var(--gold); background: #FBF6E9; }
+  .choice .bubble{
+    flex:0 0 auto;
+    width:28px;height:28px;border-radius:50%;
+    border:2px solid var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:13px;
+    color:var(--ink-soft);
+    background:var(--card);
+    transition: all .12s ease;
+  }
+  .choice.selected{ border-color: var(--gold); background: var(--gold-pale); }
+  .choice.selected .bubble{ background:var(--gold); border-color:var(--gold); color:#fff; }
+  .choice .ctext{ flex:1; }
+
+  /* graded state */
+  .choice.correct-answer{ border-color:var(--correct); background:var(--correct-bg); }
+  .choice.correct-answer .bubble{ background:var(--correct); border-color:var(--correct); color:#fff; }
+  .choice.wrong-answer{ border-color:var(--incorrect); background:var(--incorrect-bg); }
+  .choice.wrong-answer .bubble{ background:var(--incorrect); border-color:var(--incorrect); color:#fff; }
+  .q-card.graded .choice{ cursor:default; }
+  .q-card.graded .choice:hover{ background:inherit; }
+
+  .submit-bar{
+    position:sticky; bottom:0; z-index:15;
+    display:flex; justify-content:center;
+    padding: 18px 0 6px;
+    margin-top: 10px;
+  }
+  .btn-primary{
+    background: var(--ink); color:var(--paper);
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:16px;
+    border:none; border-radius:30px;
+    padding:14px 38px;
+    cursor:pointer;
+    box-shadow: 0 8px 20px rgba(27,46,75,0.25);
+    transition: transform .12s ease, background .12s ease;
+    display:flex; align-items:center; gap:10px;
+  }
+  .btn-primary:hover{ transform: translateY(-1px); background:#26426b; }
+  .btn-primary:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+  .btn-ghost{
+    background:transparent; color:var(--ink); border:1.5px solid var(--ink);
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:15px;
+    border-radius:30px; padding:12px 30px; cursor:pointer;
+  }
+
+  .unanswered-note{
+    text-align:center; font-family:'Tajawal',sans-serif; color:var(--incorrect);
+    font-size:13.5px; margin-bottom:8px; min-height:18px;
+  }
+
+  /* ---------- Results screen ---------- */
+  .result-hero{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding: 34px 24px;
+    text-align:center;
+    margin-bottom: 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .stamp{
+    width:150px;height:150px;
+    border-radius:50%;
+    border:5px solid var(--gold);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    margin: 0 auto 18px;
+    transform: rotate(-6deg);
+    animation: stampin .45s cubic-bezier(.2,1.4,.4,1);
+    background: repeating-radial-gradient(circle at center, var(--card) 0 2px, #fbf6e9 2px 4px);
+  }
+  @keyframes stampin{
+    0%{ transform: scale(2.2) rotate(-6deg); opacity:0; }
+    70%{ transform: scale(0.94) rotate(-6deg); opacity:1;}
+    100%{ transform: scale(1) rotate(-6deg); opacity:1;}
+  }
+  .stamp .score-num{ font-family:'Aref Ruqaa',serif; font-size:40px; color:var(--ink); line-height:1;}
+  .stamp .score-den{ font-family:'Tajawal',sans-serif; font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .result-hero h2{ font-family:'Aref Ruqaa',serif; font-size:26px; margin:6px 0 4px; }
+  .result-hero .pct{ font-family:'Cairo',sans-serif; font-weight:800; font-size:22px; }
+  .result-hero .pct.good{ color:var(--correct); }
+  .result-hero .pct.mid{ color:var(--gold); }
+  .result-hero .pct.bad{ color:var(--incorrect); }
+  .result-hero .encouragement{ font-family:'Tajawal',sans-serif; color:var(--ink-soft); font-size:14px; margin-top:6px; }
+
+  .result-actions{ display:flex; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+
+  .review-toggle{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-family:'Tajawal',sans-serif; color:var(--ink-soft); font-size:13.5px;
+    margin: 6px 0 20px; cursor:pointer; user-select:none;
+  }
+
+  .filter-row{ display:flex; gap:8px; justify-content:center; margin-bottom:18px; flex-wrap:wrap; }
+  .filter-chip{
+    font-family:'Tajawal',sans-serif; font-size:12.5px; font-weight:500;
+    padding:6px 14px; border-radius:20px; border:1px solid var(--line);
+    background:var(--card); color:var(--ink-soft); cursor:pointer;
+  }
+  .filter-chip.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  footer.credit{
+    text-align:center; margin-top:50px;
+    font-family:'Tajawal',sans-serif; font-size:12px; color:var(--ink-faint);
+  }
+
+  @media (max-width: 560px){
+    .masthead h1{ font-size:32px; }
+    .masthead .seal{ display:none; }
+    .exam-card{ padding:14px; gap:12px; }
+    .exam-card .index-bubble{ width:44px;height:44px; font-size:18px; }
+    .q-card{ padding:16px 14px; }
+    .stamp{ width:120px;height:120px; }
+    .stamp .score-num{ font-size:32px; }
+  }
+
+  .hidden{ display:none !important; }
+
+  ::selection{ background: var(--gold-pale); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
